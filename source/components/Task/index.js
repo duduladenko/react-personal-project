@@ -24,18 +24,26 @@ export default class Task extends PureComponent {
         message,
     });
 
+    _removeTask = () => {
+        const { _removeTaskAsync, id } = this.props;
+
+        _removeTaskAsync(id);
+    }
+
     render () {
+        const { message }  = this.props;
+
         return (
             <li className = { Styles.task }>                
                 <div className = { Styles.content }>
                     <Checkbox inlineBlock className = { Styles.toggleTaskCompletedState }  {...checkTaskConfig} />    
-                    <input disabled type="text" value="The task"/>
+                    <input disabled type="text" value = { message }/>
                     
                 </div>
                 <div className = { Styles.actions }>
                     <Star inlineBlock className = { Styles.toggleTaskFavoriteState } />
                     <Edit inlineBlock className = { Styles.updateTaskMessageOnClick } />
-                    <Remove inlineBlock />
+                    <Remove inlineBlock  onClick = { this._removeTask } />
                 </div>                
             </li>
         );
