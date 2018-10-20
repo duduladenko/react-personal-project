@@ -45,8 +45,26 @@ export const api = {
         });
 
         if(response.status !== 204)
-            throw new Error('Post hasn\'t been deleted');
+            throw new Error('Task hasn\'t been deleted');
 
         return true;
+    },
+
+    async updateTask(taskShape) {
+        const response = await fetch(MAIN_URL, {
+            method: 'PUT',
+            headers: {
+                authorization: TOKEN,
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify([taskShape]),
+        });
+
+        if(response.status !== 200)
+            throw new Error('Task hasn\'t been updated');
+
+        const { data: tasks } = await response.json();
+
+        return tasks[0];
     }
 };

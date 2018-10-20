@@ -84,11 +84,29 @@ export default class Scheduler extends Component {
         }
     };
 
+    _updateTaskAsync = async (taskShape) => {
+        try {
+            const updatedTask = await api.updateTask(taskShape);
+
+            this.setState((prevState) => ({
+                tasks: prevState.tasks.map( task => task.id == updatedTask.id ? updatedTask : task)
+            }));
+
+        } catch(error) {
+            console.log(error);
+        }
+    };
+
     render () {
         const { newTaskMessage, tasks } = this.state;
 
         const tasksJSX = tasks.map( (task) => (
-            <Task key = { task.id }  { ...task } _removeTaskAsync = { this._removeTaskAsync } />
+            <Task
+                key = { task.id }
+                { ...task }
+                _removeTaskAsync = { this._removeTaskAsync }
+                _updateTaskAsync = { this._updateTaskAsync }
+            />
         ));
 
         return (

@@ -30,18 +30,49 @@ export default class Task extends PureComponent {
         _removeTaskAsync(id);
     }
 
+    _toggleTaskCompletedState= () => {
+        const { _updateTaskAsync, completed } = this.props;
+
+        _updateTaskAsync(
+            this._getTaskShape({
+                completed: !completed,
+            })
+        );
+    }
+
+    _toggleTaskFavoriteState = () => {
+        const { _updateTaskAsync, favorite } = this.props;
+
+        _updateTaskAsync(
+            this._getTaskShape({
+                favorite: !favorite,
+            })
+        );
+    }
+
     render () {
-        const { message }  = this.props;
+        const { completed, favorite, message }  = this.props;
 
         return (
             <li className = { Styles.task }>                
                 <div className = { Styles.content }>
-                    <Checkbox inlineBlock className = { Styles.toggleTaskCompletedState }  {...checkTaskConfig} />    
+                    <Checkbox
+                        inlineBlock
+                        checked = { completed }
+                        className = { Styles.toggleTaskCompletedState }
+                        {...checkTaskConfig }
+                        onClick = { this._toggleTaskCompletedState }
+                    />    
                     <input disabled type="text" value = { message }/>
                     
                 </div>
                 <div className = { Styles.actions }>
-                    <Star inlineBlock className = { Styles.toggleTaskFavoriteState } />
+                    <Star
+                        inlineBlock
+                        checked = { favorite }
+                        className = { Styles.toggleTaskFavoriteState }
+                        onClick = { this._toggleTaskFavoriteState }
+                    />
                     <Edit inlineBlock className = { Styles.updateTaskMessageOnClick } />
                     <Remove inlineBlock  onClick = { this._removeTask } />
                 </div>                
