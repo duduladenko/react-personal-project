@@ -38,14 +38,9 @@ export default class Scheduler extends Component {
     };
 
     _updateNewTaskMessage = (event) => {
-        try {
-            const { value: message } = event.target;
+        const { value: message } = event.target;
 
-            this.setState({ newTaskMessage: message });
-        }
-        catch(error) {
-            console.log(error);
-        }
+        this.setState({ newTaskMessage: message });
     };
 
     _getAllCompleted = () => {
@@ -66,6 +61,12 @@ export default class Scheduler extends Component {
     _setTasksFetchingState = (state) => {
         this.setState({ isTasksFetching: state });
      };
+
+    _updateTasksFilter = (event) => {
+        const { value: tasksFilter } = event.target;
+
+        this.setState({ tasksFilter: tasksFilter.toLocaleLowerCase() });
+    };
 
     _createTaskAsync = async (event) => {
         try {
@@ -144,9 +145,9 @@ export default class Scheduler extends Component {
     };
 
     render () {
-        const { isTasksFetching, newTaskMessage, tasks } = this.state;
+        const { isTasksFetching, tasksFilter, newTaskMessage, tasks } = this.state;
 
-        const tasksJSX = tasks.map( (task) => (
+        const tasksJSX = tasks.filter(task => !task.message.toLocaleLowerCase().search(tasksFilter) ).map( (task) => (
             <Task 
                 key = { task.id }
                 { ...task }
@@ -158,10 +159,15 @@ export default class Scheduler extends Component {
         return (
             <section className = { Styles.scheduler }>
                 <main>
-                    <Spinner isSpinning = { isTasksFetching } />
+                <Spinner isSpinning = { isTasksFetching } />
                     <header>
                         <h1>Task sheduler</h1>
-                        <input type="text" placeholder="Search" />
+                        <input
+                            onChange = { this._updateTasksFilter }
+                            placeholder = "Search" 
+                            type = "search"
+                            value = { tasksFilter }
+                        />
                     </header>
                     
                     <section>
