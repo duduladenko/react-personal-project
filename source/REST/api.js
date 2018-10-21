@@ -66,5 +66,23 @@ export const api = {
         const { data: tasks } = await response.json();
 
         return tasks[0];
+    },
+
+    async completeAllTasks(taskShapes) {
+        const response = await fetch(MAIN_URL, {
+            method: 'PUT',
+            headers: {
+                authorization: TOKEN,
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify(taskShapes),
+        });
+
+        if(response.status !== 200)
+            throw new Error('Tasks haven\'t been updated');
+
+        const { data: tasks } = await response.json();
+
+        return tasks;
     }
 };
