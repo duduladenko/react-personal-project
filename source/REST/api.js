@@ -46,8 +46,6 @@ export const api = {
 
         if(response.status !== 204)
             throw new Error('Task hasn\'t been deleted');
-
-        return true;
     },
 
     async updateTask(taskShape) {
@@ -80,9 +78,5 @@ export const api = {
 
         if(response.status !== 200)
             throw new Error('Tasks haven\'t been updated');
-
-        const { data: tasks } = await response.json();
-
-        return tasks;
     }
 };

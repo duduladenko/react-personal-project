@@ -74,7 +74,7 @@ export default class Task extends PureComponent {
                         onClick = { this._toggleTaskFavoriteState }
                     />
                     <Edit inlineBlock className = { Styles.updateTaskMessageOnClick } />
-                    <Remove inlineBlock  onClick = { this._removeTask } />
+                    <Remove inlineBlock onClick = { this._removeTask } />
                 </div>                
             </li>
         );

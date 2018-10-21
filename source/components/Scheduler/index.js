@@ -92,7 +92,7 @@ export default class Scheduler extends Component {
     _removeTaskAsync = async (id) => {
         try {
             this._setTasksFetchingState(true);
-            const success = await api.removeTask(id);
+            await api.removeTask(id);
 
             this.setState((prevState) => ({
                 tasks: prevState.tasks.filter(task => task.id != id)
@@ -131,7 +131,7 @@ export default class Scheduler extends Component {
                 return null;
 
             this._setTasksFetchingState(true);
-            const updatedTasks = await api.completeAllTasks(uncompletedTaskShapes);
+            await api.completeAllTasks(uncompletedTaskShapes);
 
             this.setState((prevState) => ({
                 tasks: prevState.tasks.map(task => { task.completed = true; return task})
@@ -146,7 +146,6 @@ export default class Scheduler extends Component {
     render () {
         const { isTasksFetching, newTaskMessage, tasks } = this.state;
 
-        const spinnerJSX = isTasksFetching ? <Spinner /> : null;
         const tasksJSX = tasks.map( (task) => (
             <Task 
                 key = { task.id }
@@ -159,7 +158,7 @@ export default class Scheduler extends Component {
         return (
             <section className = { Styles.scheduler }>
                 <main>
-                    { spinnerJSX }
+                    <Spinner isSpinning = { isTasksFetching } />
                     <header>
                         <h1>Task sheduler</h1>
                         <input type="text" placeholder="Search" />
