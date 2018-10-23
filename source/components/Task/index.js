@@ -3,10 +3,10 @@ import React, { PureComponent } from 'react';
 
 // Instruments
 import Styles from './styles.m.css';
+import { checkTaskConfig } from '../../theme/assets/CheckboxConfig';
 
 // Components
 import Checkbox from '../../theme/assets/Checkbox';
-import { checkTaskConfig } from '../../theme/assets/CheckboxConfig';
 import Star from '../../theme/assets/Star';
 import Edit from '../../theme/assets/Edit';
 import Remove from '../../theme/assets/Remove';
@@ -24,6 +24,13 @@ export default class Task extends PureComponent {
         message,
     });
 
+    state = {
+        isTaskEditing: false,
+        newMessage: this.props.message
+    }
+
+    taskInput = React.createRef();
+
     _removeTask = () => {
         const { _removeTaskAsync, id } = this.props;
 
@@ -34,9 +41,7 @@ export default class Task extends PureComponent {
         const { _updateTaskAsync, completed } = this.props;
 
         _updateTaskAsync(
-            this._getTaskShape({
-                completed: !completed,
-            })
+            this._getTaskShape({ completed: !completed})
         );
     }
 
@@ -44,14 +49,80 @@ export default class Task extends PureComponent {
         const { _updateTaskAsync, favorite } = this.props;
 
         _updateTaskAsync(
-            this._getTaskShape({
-                favorite: !favorite,
-            })
+            this._getTaskShape({ favorite: !favorite })
         );
     }
 
+    _updateNewTaskMessage = (event) => {
+        const { value: message } = event.target;
+
+        this.setState({ newMessage: message });
+    }
+
+    _taskInputFocus = () => {
+        this.taskInput.current.focus();
+    }
+    
+    _setTaskEditingState = (state) => {
+        this.setState({ isTaskEditing: state }, () => {
+            if(state)
+                this._taskInputFocus();
+        });
+    }
+
+    _cancelUpdatingTaskMessage = () => {
+        const { message }  = this.props;
+
+        this.setState({ newMessage: message, isTaskEditing: false });
+    }
+
+    _updateTask = () => {
+        const { _updateTaskAsync, message } = this.props;
+        const { newMessage } = this.state;
+
+        if(newMessage === '')
+            return null;
+
+        if(newMessage === message) {
+            this._setTaskEditingState(false);
+
+            return null;
+        } else {
+            _updateTaskAsync(
+                this._getTaskShape({ message: newMessage })
+            );
+
+            this._setTaskEditingState(false);
+        }
+    }
+
+    _updateTaskMessageOnClick = () => {
+        const { isTaskEditing } = this.state;
+
+        if(isTaskEditing)
+            this._updateTask();
+        else
+            this._setTaskEditingState(true);
+        
+        return null;
+    }    
+
+    _updateTaskMessageOnKeyDown = (event) => {
+        const { newMessage }  = this.state;
+        
+        //it's a test requirement but it breaks UI usability when user fully clear editing field and tries to cancel changes
+        if( newMessage === '')
+            return null;
+            
+        if (event.key === 'Enter')
+            this._updateTask();
+        else if (event.key === 'Escape')
+            this._cancelUpdatingTaskMessage();
+    }
+
     render () {
-        const { completed, favorite, message }  = this.props;
+        const { completed, favorite }  = this.props;
+        const { isTaskEditing, newMessage } = this.state;
 
         return (
             <li className = { Styles.task }>                
@@ -63,8 +134,14 @@ export default class Task extends PureComponent {
                         {...checkTaskConfig }
                         onClick = { this._toggleTaskCompletedState }
                     />    
-                    <input disabled type="text" value = { message }/>
-                    
+                    <input
+                        ref = { this.taskInput }
+                        disabled = { !isTaskEditing }
+                        type = "text"
+                        value = { newMessage }
+                        onChange = { this._updateNewTaskMessage }
+                        onKeyDown = { this._updateTaskMessageOnKeyDown }                        
+                    />
                 </div>
                 <div className = { Styles.actions }>
                     <Star
@@ -73,8 +150,12 @@ export default class Task extends PureComponent {
                         className = { Styles.toggleTaskFavoriteState }
                         onClick = { this._toggleTaskFavoriteState }
                     />
-                    <Edit inlineBlock className = { Styles.updateTaskMessageOnClick } />
-                    <Remove inlineBlock onClick = { this._removeTask } />
+                    <Edit
+                        inlineBlock
+                        className = { Styles.updateTaskMessageOnClick }                        
+                        onClick = { this._updateTaskMessageOnClick }
+                        />
+                    <Remove inlineBlock className = { Styles.removeTask } onClick = { this._removeTask } />
                 </div>                
             </li>
         );
