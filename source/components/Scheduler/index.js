@@ -1,9 +1,10 @@
 // Core
 import React, { Component } from 'react';
+import FlipMove from 'react-flip-move';
 
 // Instruments
 import Styles from './styles.m.css';
-import { api } from '../../REST'; // ! Импорт модуля API должен иметь именно такой вид (import { api } from '../../REST')
+import { api } from '../../REST'; // ! An import of an API module should be exactly like this (import { api } from '../../REST')
 
 // Components
 import Spinner from '../Spinner';
@@ -54,10 +55,6 @@ export default class Scheduler extends Component {
             this._createTaskAsync(event);
     };
     
-    _handleFormSubmit = (event) => {        
-        this._createTaskAsync(event);
-    };
-
     _setTasksFetchingState = (state) => {
         this.setState({ isTasksFetching: state });
      };
@@ -144,16 +141,35 @@ export default class Scheduler extends Component {
         }
     };
 
+    _tasksSorting = (a, b) => {
+        if(a.completed && !b.completed)
+            return 1;
+
+        if(!a.completed && b.completed)
+            return -1;
+
+        if(a.favorite && !b.favorite)
+            return -1;
+
+        if(!a.favorite && b.favorite)
+            return 1;
+
+        return 0;
+    };
+
     render () {
         const { isTasksFetching, tasksFilter, newTaskMessage, tasks } = this.state;
 
-        const tasksJSX = tasks.filter(task => !task.message.toLocaleLowerCase().search(tasksFilter) ).map( (task) => (
-            <Task 
-                key = { task.id }
-                { ...task }
-                _removeTaskAsync = { this._removeTaskAsync }
-                _updateTaskAsync = { this._updateTaskAsync }
-            />
+        const tasksJSX =  tasks
+            .filter(task => !task.message.toLocaleLowerCase().search(tasksFilter))
+            .sort(this._tasksSorting)
+            .map(task => (
+                <Task 
+                    key = { task.id }
+                    { ...task }
+                    _removeTaskAsync = { this._removeTaskAsync }
+                    _updateTaskAsync = { this._updateTaskAsync }
+                />
         ));
 
         return (
@@ -171,7 +187,7 @@ export default class Scheduler extends Component {
                     </header>
                     
                     <section>
-                        <form onSubmit = { this._handleFormSubmit }>
+                        <form onSubmit = { this._createTaskAsync }>
                             <input
                                 className = { Styles.createTask }
                                 placeholder = "Describe your new task"
@@ -182,9 +198,13 @@ export default class Scheduler extends Component {
                                 onKeyPress = { this._createTaskOnEnter } />
                             <button>Add task</button>
                         </form>
-                        <ul>
-                            { tasksJSX }
-                        </ul>
+                        <div className = { Styles.overlay }>
+                            <ul>
+                                <FlipMove duration = {400}>
+                                    { tasksJSX }
+                                </FlipMove>
+                            </ul>
+                        </div>
                     </section>
                     
                     <footer>
