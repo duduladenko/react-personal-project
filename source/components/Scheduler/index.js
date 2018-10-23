@@ -49,11 +49,6 @@ export default class Scheduler extends Component {
 
         return tasks.filter(task => !task.completed).length === 0;
     };
-
-    _createTaskOnEnter = (event) => {        
-        if(event.key === 'Enter')
-            this._createTaskAsync(event);
-    };
     
     _setTasksFetchingState = (state) => {
         this.setState({ isTasksFetching: state });
@@ -194,8 +189,8 @@ export default class Scheduler extends Component {
                                 type = "text"
                                 maxLength = { 50 }
                                 value = { newTaskMessage }
-                                onChange = { this._updateNewTaskMessage }
-                                onKeyPress = { this._createTaskOnEnter } />
+                                onChange = { this._updateNewTaskMessage }                                
+                            />
                             <button>Add task</button>
                         </form>
                         <div className = { Styles.overlay }>
