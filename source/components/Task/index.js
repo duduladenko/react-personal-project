@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 
 // Instruments
 import Styles from './styles.m.css';
-import { checkTaskConfig } from '../../theme/assets/CheckboxConfig';
+import { checkTaskConfig, actionConfig } from '../../theme/assets/CheckboxConfig';
 
 // Components
 import Checkbox from '../../theme/assets/Checkbox';
@@ -80,7 +80,7 @@ export default class Task extends PureComponent {
         const { _updateTaskAsync, message } = this.props;
         const { newMessage } = this.state;
 
-        if(newMessage === '')
+        if(!newMessage)
             return null;
 
         if(newMessage === message) {
@@ -111,7 +111,7 @@ export default class Task extends PureComponent {
         const { newMessage }  = this.state;
         
         //it's a test requirement but it breaks UI usability when user fully clear editing field and tries to cancel changes
-        if( newMessage === '')
+        if(!newMessage)
             return null;
             
         if (event.key === 'Enter')
@@ -129,15 +129,16 @@ export default class Task extends PureComponent {
                 <div className = { Styles.content }>
                     <Checkbox
                         inlineBlock
+                        { ...checkTaskConfig }
                         checked = { completed }
                         className = { Styles.toggleTaskCompletedState }
-                        {...checkTaskConfig }
                         onClick = { this._toggleTaskCompletedState }
                     />    
                     <input
                         ref = { this.taskInput }
                         disabled = { !isTaskEditing }
                         type = "text"
+                        maxLength = { 50 }
                         value = { newMessage }
                         onChange = { this._updateNewTaskMessage }
                         onKeyDown = { this._updateTaskMessageOnKeyDown }                        
@@ -146,16 +147,24 @@ export default class Task extends PureComponent {
                 <div className = { Styles.actions }>
                     <Star
                         inlineBlock
-                        checked = { favorite }
+                        { ...actionConfig }
+                        checked = { favorite }                        
                         className = { Styles.toggleTaskFavoriteState }
                         onClick = { this._toggleTaskFavoriteState }
                     />
                     <Edit
                         inlineBlock
+                        { ...actionConfig }
+                        checked = { isTaskEditing }
                         className = { Styles.updateTaskMessageOnClick }                        
                         onClick = { this._updateTaskMessageOnClick }
                         />
-                    <Remove inlineBlock className = { Styles.removeTask } onClick = { this._removeTask } />
+                    <Remove
+                        inlineBlock
+                        { ...actionConfig }
+                        className = { Styles.removeTask }
+                        onClick = { this._removeTask }
+                    />
                 </div>                
             </li>
         );

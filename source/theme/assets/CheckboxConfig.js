@@ -5,7 +5,12 @@ const checkAllConfig = {
 
 const checkTaskConfig = {
     color1: "#3B8EF3",
-    color2: "#fff",
+    color2: "#FFF",
 };
 
-export { checkAllConfig, checkTaskConfig }
+const actionConfig = {
+    color1: "#3B8EF3",
+    color2: "#000",
+}
+
+export { checkAllConfig, checkTaskConfig, actionConfig }

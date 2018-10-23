@@ -158,8 +158,8 @@ export default class Scheduler extends Component {
 
         return (
             <section className = { Styles.scheduler }>
-                <main>
                 <Spinner isSpinning = { isTasksFetching } />
+                <main>
                     <header>
                         <h1>Task sheduler</h1>
                         <input
@@ -173,13 +173,14 @@ export default class Scheduler extends Component {
                     <section>
                         <form onSubmit = { this._handleFormSubmit }>
                             <input
+                                className = { Styles.createTask }
                                 placeholder = "Describe your new task"
                                 type = "text"
                                 maxLength = { 50 }
                                 value = { newTaskMessage }
                                 onChange = { this._updateNewTaskMessage }
                                 onKeyPress = { this._createTaskOnEnter } />
-                            <button type="submit" >Add task</button>
+                            <button>Add task</button>
                         </form>
                         <ul>
                             { tasksJSX }

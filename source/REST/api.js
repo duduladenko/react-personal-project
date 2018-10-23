@@ -67,16 +67,22 @@ export const api = {
     },
 
     async completeAllTasks(taskShapes) {
-        const response = await fetch(MAIN_URL, {
-            method: 'PUT',
-            headers: {
-                authorization: TOKEN,
-                'content-type': 'application/json',
-            },
-            body: JSON.stringify(taskShapes),
-        });
+        const promises = taskShapes.map(taskShape => (
+            fetch(MAIN_URL, {
+                method: 'PUT',
+                headers: {
+                    authorization: TOKEN,
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify([taskShape]),
+            })
+        ));
+         
+        const responses = await Promise.all(promises);
 
-        if(response.status !== 200)
-            throw new Error('Tasks haven\'t been updated');
+        responses.forEach(response => {
+            if(response.status !== 200)
+                throw new Error('Tasks haven\'t been updated');
+        });
     }
 };
